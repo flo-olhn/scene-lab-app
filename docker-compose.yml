@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432" 
+    environment:
+      POSTGRES_USER: scenelab
+      POSTGRES_PASSWORD: scenelab
+      POSTGRES_DB: scenelab
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: scenelab
+      MONGO_INITDB_ROOT_PASSWORD: scenelab
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  postgres_data:
+  mongo_data:
