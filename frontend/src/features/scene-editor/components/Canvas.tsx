@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { LeftPanel } from './LeftPanel';
-import { RightPanel } from './RightPanel';
 
 export const Canvas = () => {
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef(null);
   
   // Dimensions de la zone d'édition
@@ -22,10 +20,10 @@ export const Canvas = () => {
   ]);
   
   // Gestion de la sélection
-  const [selectedElementId, setSelectedElementId] = useState(null);
+  const [selectedElementId, setSelectedElementId] = useState<number | null>(null);
   const [isMovingElement, setIsMovingElement] = useState(false);
   const [elementDragStart, setElementDragStart] = useState({ x: 0, y: 0 });
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0, wsX: 0, wsY: 0 });
+  //const [mousePosition, setMousePosition] = useState({ x: 0, y: 0, wsX: 0, wsY: 0 });
 
   // Centrer initialement la zone d'édition
   useEffect(() => {
@@ -38,35 +36,40 @@ export const Canvas = () => {
       
       setPosition({ x: centerX, y: centerY });
     }
-  }, []);
+  }, [canvasRef, editorRef, scale]);
 
-  // Gestion du zoom avec la molette de souris
-  const handleWheel = (e) => {
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>): void => {
     e.preventDefault();
-    const delta = e.deltaY;
-    const zoomFactor = delta > 0 ? 0.9 : 1.1; // Facteur de zoom
+    const delta: number = e.deltaY;
+    const zoomFactor: number = delta > 0 ? 0.9 : 1.1; // Facteur de zoom
     
     // Limite le zoom entre 0.1 et 5
-    const newScale = Math.min(Math.max(scale * zoomFactor, 0.1), 5);
+    const newScale: number = Math.min(Math.max(scale * zoomFactor, 0.1), 5);
     
     // Position de la souris par rapport à la fenêtre
-    const rect = canvasRef.current.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
+    if (!canvasRef.current) return;
+    const rect: DOMRect = canvasRef.current.getBoundingClientRect();
+    const mouseX: number = e.clientX - rect.left;
+    const mouseY: number = e.clientY - rect.top;
     
     // Conversion des coordonnées actuelles
-    const { workspaceX, workspaceY } = clientToWorkspaceCoordinates(e.clientX, e.clientY);
+    const { workspaceX, workspaceY }: WorkspaceCoordinates = clientToWorkspaceCoordinates(e.clientX, e.clientY);
     
     // Calcul du nouveau décalage pour garder le point focal sous la souris
-    const newPosX = mouseX - workspaceX * newScale;
-    const newPosY = mouseY - workspaceY * newScale;
+    const newPosX: number = mouseX - workspaceX * newScale;
+    const newPosY: number = mouseY - workspaceY * newScale;
     
     setPosition({ x: newPosX, y: newPosY });
     setScale(newScale);
   };
 
   // Fonction pour convertir les coordonnées client en coordonnées de l'espace de travail
-  const clientToWorkspaceCoordinates = (clientX, clientY) => {
+  interface WorkspaceCoordinates {
+    workspaceX: number;
+    workspaceY: number;
+  }
+
+  const clientToWorkspaceCoordinates = (clientX: number, clientY: number): WorkspaceCoordinates => {
     if (!canvasRef.current) return { workspaceX: 0, workspaceY: 0 };
     
     const rect = canvasRef.current.getBoundingClientRect();
@@ -81,7 +84,17 @@ export const Canvas = () => {
   };
 
   // Fonction pour vérifier si un point est dans un élément
-  const isPointInElement = (clientX, clientY, element) => {
+  interface Element {
+    id: number;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+    content: string;
+  }
+
+  const isPointInElement = (clientX: number, clientY: number, element: Element): boolean => {
     const { workspaceX, workspaceY } = clientToWorkspaceCoordinates(clientX, clientY);
     
     return (
@@ -92,7 +105,12 @@ export const Canvas = () => {
     );
   };
 
-  const constrainToEditor = (x, y, width, height) => {
+  interface ConstrainToEditorResult {
+    x: number;
+    y: number;
+  }
+
+  const constrainToEditor = (x: number, y: number, width: number, height: number): ConstrainToEditorResult => {
     // Contraindre la position X
     const constrainedX = Math.max(0, Math.min(x, editorWidth - width));
     
@@ -102,10 +120,10 @@ export const Canvas = () => {
     return { x: constrainedX, y: constrainedY };
   };
 
-  // Gestion du déplacement (pan) et de la sélection
-  const handleMouseDown = (e) => {
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     // Mise à jour des coordonnées de la souris pour le débogage
-    updateMousePositionDebug(e);
+    //updateMousePositionDebug(e);
     
     // Vérifie si on clique sur un élément
     const clickedElement = elements.find(elem => isPointInElement(e.clientX, e.clientY, elem));
@@ -123,9 +141,11 @@ export const Canvas = () => {
     }
   };
 
-  const handleMouseMove = (e) => {
+  
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
     // Mise à jour des coordonnées de la souris pour le débogage
-    updateMousePositionDebug(e);
+    //updateMousePositionDebug(e);
     
     if (isMovingElement && selectedElementId !== null) {
       // Déplacement d'un élément
@@ -185,7 +205,8 @@ export const Canvas = () => {
   };
 
   // Mise à jour des coordonnées de la souris pour le débogage
-  const updateMousePositionDebug = (e) => {
+  /*
+  const updateMousePositionDebug = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!canvasRef.current) return;
     
     const { workspaceX, workspaceY } = clientToWorkspaceCoordinates(e.clientX, e.clientY);
@@ -197,6 +218,7 @@ export const Canvas = () => {
       wsY: Math.round(workspaceY)
     });
   };
+  */
 
   // Fonction pour recentrer le canvas
   const handleResetView = () => {
