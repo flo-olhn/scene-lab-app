@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import { LeftPanel } from './LeftPanel';
+import { RightPanel } from './RightPanel';
 
 export const Canvas = () => {
   const [scale, setScale] = useState(1);
@@ -235,7 +237,7 @@ export const Canvas = () => {
   };
 
   return (
-    <div className="absolute w-full h-screen overflow-hidden bg-stone-900 text-black">
+    <div className="absolute w-full h-screen overflow-hidden bg-stone-950 text-black">
       
       <div
         ref={canvasRef}
@@ -309,7 +311,7 @@ export const Canvas = () => {
       </div>
 
       {/* Barre d'informations supérieure */}
-      <div className="absolute top-0 w-full h-10 flex justify-between items-center bg-stone-800/30 border-b border-stone-700 px-4 py-2 text-white backdrop-blur-sm">
+      <div className="absolute top-0 w-full h-10 flex justify-between items-center bg-stone-900/90 border-b border-stone-700 px-4 py-2 text-white backdrop-blur-xl">
         <div className="text-sm">
           Zoom: {Math.round(scale * 100)}%
         </div>
@@ -324,11 +326,9 @@ export const Canvas = () => {
       </div>
 
       {/* Panneau gauche */}
-      <div className="absolute top-10 w-64 h-[calc(100%-35px)] flex justify-between items-center bg-stone-800/30 border-r border-stone-700 text-white backdrop-blur-sm"></div>
+      <LeftPanel />
       {/* Panneau droit */}
-      <div className="absolute top-10 right-0 w-64  h-[calc(100%-35px)] flex justify-between items-center bg-stone-800/30 border-l border-stone-700 text-white backdrop-blur-sm"></div>
-      
-      {/* Coordonnées de la souris pour le débogage */}
+      <RightPanel />
       
       {/* Info utilisateur */}
       <div className="absolute bottom-4 left-4 bg-white py-1 px-2 rounded shadow text-sm">

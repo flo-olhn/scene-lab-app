@@ -2,6 +2,6 @@ import React from 'react';
 
 export const LeftPanel: React.FC = () => {
   return (
-    <div className="left-0 w-[240px] border-r border-stone-700 h-full bg-stone-800/30 backdrop-blur-sm"></div>
+    <div className="absolute top-10 left-0 w-64  h-[calc(100%-35px)] flex justify-between items-center bg-stone-900/90 border-r border-stone-700 text-white backdrop-blur-xl"></div>
   );
 };
