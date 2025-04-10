@@ -324,7 +324,7 @@ export const Canvas = () => {
       </div>
 
       {/* Panneau gauche */}
-      <div className="absolute top-10 w-64 h-[calc(100%-35px)] flex justify-between items-center bg-stone-800/30 border-r border-stone-700 text-white backdrop-blur-sm "></div>
+      <div className="absolute top-10 w-64 h-[calc(100%-35px)] flex justify-between items-center bg-stone-800/30 border-r border-stone-700 text-white backdrop-blur-sm"></div>
       {/* Panneau droit */}
       <div className="absolute top-10 right-0 w-64  h-[calc(100%-35px)] flex justify-between items-center bg-stone-800/30 border-l border-stone-700 text-white backdrop-blur-sm"></div>
       
