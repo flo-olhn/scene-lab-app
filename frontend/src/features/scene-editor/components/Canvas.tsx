@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { LeftPanel } from './LeftPanel';
 import { RightPanel } from './RightPanel';
+import { SelectIndicator } from './SelectIndicator';
 
 export const Canvas = () => {
   const [scale, setScale] = useState(1);
@@ -206,22 +207,6 @@ export const Canvas = () => {
     return 'grab';
   };
 
-  // Mise à jour des coordonnées de la souris pour le débogage
-  /*
-  const updateMousePositionDebug = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!canvasRef.current) return;
-    
-    const { workspaceX, workspaceY } = clientToWorkspaceCoordinates(e.clientX, e.clientY);
-    
-    setMousePosition({
-      x: Math.round(e.clientX - canvasRef.current.getBoundingClientRect().left),
-      y: Math.round(e.clientY - canvasRef.current.getBoundingClientRect().top),
-      wsX: Math.round(workspaceX),
-      wsY: Math.round(workspaceY)
-    });
-  };
-  */
-
   // Fonction pour recentrer le canvas
   const handleResetView = () => {
     if (canvasRef.current) {
@@ -293,17 +278,7 @@ export const Canvas = () => {
               
               {/* Contrôles de sélection */}
               {selectedElementId === element.id && (
-                <>
-                  {/* Points de contrôle aux coins */}
-                  <div className={`absolute w-full h-[2px] bg-blue-500 -top-[2px]`}></div>
-                  <div className="absolute w-full h-[2px] bg-blue-500 -bottom-[2px]"></div>
-                  <div className="absolute w-[2px] h-full bg-blue-500 -left-[2px]"></div>
-                  <div className="absolute w-[2px] h-full bg-blue-500 -right-[2px]"></div>
-                  <div className="absolute w-2 h-2 border-2 border-blue-500 bg-white rounded-full -top-[5px] -left-[5px]"></div>
-                  <div className="absolute w-2 h-2 border-2 border-blue-500 bg-white rounded-full -top-[5px] -right-[5px]"></div>
-                  <div className="absolute w-2 h-2 border-2 border-blue-500 bg-white rounded-full -bottom-[5px] -right-[5px]"></div>
-                  <div className="absolute w-2 h-2 border-2 border-blue-500 bg-white rounded-full -bottom-[5px] -left-[5px]"></div>
-                </>
+                <SelectIndicator />
               )}
             </div>
           ))}
@@ -320,7 +295,7 @@ export const Canvas = () => {
             className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
             onClick={handleResetView}
           >
-            Recentrer
+            Reset
           </button>
         </div>
       </div>
@@ -329,16 +304,6 @@ export const Canvas = () => {
       <LeftPanel />
       {/* Panneau droit */}
       <RightPanel />
-      
-      {/* Info utilisateur */}
-      <div className="absolute bottom-4 left-4 bg-white py-1 px-2 rounded shadow text-sm">
-        {selectedElementId ? `Élément ${selectedElementId} sélectionné` : 'Aucun élément sélectionné'}
-      </div>
-      
-      {/* Instructions */}
-      <div className="absolute bottom-4 right-4 bg-white py-1 px-2 rounded shadow text-sm opacity-70">
-        Molette = Zoom | Clic + Déplacement = Pan | Clic sur élément = Sélection
-      </div>
       
     </div>
   );
