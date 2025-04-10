@@ -311,8 +311,8 @@ export const Canvas = () => {
       </div>
 
       {/* Barre d'informations supérieure */}
-      <div className="absolute top-0 w-full h-10 flex justify-between items-center bg-stone-900/90 border-b border-stone-700 px-4 py-2 text-white backdrop-blur-xl">
-        <div className="text-sm">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-510px)] h-10 flex gap-10 justify-center items-center bg-stone-900/90 border-b border-stone-700 px-4 py-2 text-white backdrop-blur-xl">
+        <div className="text-sm px-3 py-1">
           Zoom: {Math.round(scale * 100)}%
         </div>
         <div className="text-sm flex space-x-2">
