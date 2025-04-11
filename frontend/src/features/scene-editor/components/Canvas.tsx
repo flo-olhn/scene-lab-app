@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react';
-import { LeftPanel } from './LeftPanel';
-import { RightPanel } from './RightPanel';
-import { SelectIndicator } from './SelectIndicator';
+import React, { useState, useRef, useEffect } from "react";
+import { LeftPanel } from "./LeftPanel";
+import { RightPanel } from "./RightPanel";
+import { SelectIndicator } from "./SelectIndicator";
 
 export const Canvas = () => {
   const [scale, setScale] = useState(1);
@@ -10,20 +10,39 @@ export const Canvas = () => {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef(null);
-  
+
   // Dimensions de la zone d'édition
   const editorWidth = 1280;
   const editorHeight = 720;
-  
+
   // Ajout des Components éditables
   const [elements, setElements] = useState([
-    { id: 1, x: 200, y: 100, width: 160, height: 96, color: 'blue', content: 'Component 1' },
-    { id: 2, x: 480, y: 200, width: 256, height: 128, color: 'green', content: 'Component 2' },
-    { id: 3, x: 320, y: 400, width: 200, height: 80, color: 'pink', content: 'Component 3' },
+    {
+      id: 1,
+      type: "rectangle",
+      x: 200,
+      y: 100,
+      width: 160,
+      height: 96,
+      color: "pink",
+      content: "",
+    },
+    {
+      id: 2,
+      type: "frame",
+      x: 480,
+      y: 200,
+      width: 256,
+      height: 128,
+      color: "",
+      content: "Component 2",
+    },
   ]);
-  
+
   // Gestion de la sélection
-  const [selectedElementId, setSelectedElementId] = useState<number | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<number | null>(
+    null
+  );
   const [isMovingElement, setIsMovingElement] = useState(false);
   const [elementDragStart, setElementDragStart] = useState({ x: 0, y: 0 });
   //const [mousePosition, setMousePosition] = useState({ x: 0, y: 0, wsX: 0, wsY: 0 });
@@ -32,11 +51,11 @@ export const Canvas = () => {
   useEffect(() => {
     if (canvasRef.current && editorRef.current) {
       const canvasRect = canvasRef.current.getBoundingClientRect();
-      
+
       // Calcul pour centrer l'éditeur dans le canvas
       const centerX = (canvasRect.width - editorWidth * scale) / 2;
       const centerY = (canvasRect.height - editorHeight * scale) / 2;
-      
+
       setPosition({ x: centerX, y: centerY });
     }
   }, [canvasRef, editorRef, scale]);
@@ -45,23 +64,24 @@ export const Canvas = () => {
     e.preventDefault();
     const delta: number = e.deltaY;
     const zoomFactor: number = delta > 0 ? 0.9 : 1.1; // Facteur de zoom
-    
+
     // Limite le zoom entre 0.1 et 5
     const newScale: number = Math.min(Math.max(scale * zoomFactor, 0.1), 5);
-    
+
     // Position de la souris par rapport à la fenêtre
     if (!canvasRef.current) return;
     const rect: DOMRect = canvasRef.current.getBoundingClientRect();
     const mouseX: number = e.clientX - rect.left;
     const mouseY: number = e.clientY - rect.top;
-    
+
     // Conversion des coordonnées actuelles
-    const { workspaceX, workspaceY }: WorkspaceCoordinates = clientToWorkspaceCoordinates(e.clientX, e.clientY);
-    
+    const { workspaceX, workspaceY }: WorkspaceCoordinates =
+      clientToWorkspaceCoordinates(e.clientX, e.clientY);
+
     // Calcul du nouveau décalage pour garder le point focal sous la souris
     const newPosX: number = mouseX - workspaceX * newScale;
     const newPosY: number = mouseY - workspaceY * newScale;
-    
+
     setPosition({ x: newPosX, y: newPosY });
     setScale(newScale);
   };
@@ -72,34 +92,45 @@ export const Canvas = () => {
     workspaceY: number;
   }
 
-  const clientToWorkspaceCoordinates = (clientX: number, clientY: number): WorkspaceCoordinates => {
+  const clientToWorkspaceCoordinates = (
+    clientX: number,
+    clientY: number
+  ): WorkspaceCoordinates => {
     if (!canvasRef.current) return { workspaceX: 0, workspaceY: 0 };
-    
+
     const rect = canvasRef.current.getBoundingClientRect();
     const canvasX = clientX - rect.left;
     const canvasY = clientY - rect.top;
-    
+
     // Conversion en tenant compte de la position et de l'échelle
     const workspaceX = (canvasX - position.x) / scale;
     const workspaceY = (canvasY - position.y) / scale;
-    
+
     return { workspaceX, workspaceY };
   };
 
   // Fonction pour vérifier si un point est dans un Component
   interface Element {
     id: number;
+    type: string;
     x: number;
     y: number;
     width: number;
     height: number;
-    color: string;
-    content: string;
+    color?: string;
+    content?: string;
   }
 
-  const isPointInElement = (clientX: number, clientY: number, element: Element): boolean => {
-    const { workspaceX, workspaceY } = clientToWorkspaceCoordinates(clientX, clientY);
-    
+  const isPointInElement = (
+    clientX: number,
+    clientY: number,
+    element: Element
+  ): boolean => {
+    const { workspaceX, workspaceY } = clientToWorkspaceCoordinates(
+      clientX,
+      clientY
+    );
+
     return (
       workspaceX >= element.x &&
       workspaceX <= element.x + element.width &&
@@ -113,24 +144,30 @@ export const Canvas = () => {
     y: number;
   }
 
-  const constrainToEditor = (x: number, y: number, width: number, height: number): ConstrainToEditorResult => {
+  const constrainToEditor = (
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  ): ConstrainToEditorResult => {
     // Contraindre la position X
     const constrainedX = Math.max(0, Math.min(x, editorWidth - width));
-    
+
     // Contraindre la position Y
     const constrainedY = Math.max(0, Math.min(y, editorHeight - height));
-    
+
     return { x: constrainedX, y: constrainedY };
   };
-
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     // Mise à jour des coordonnées de la souris pour le débogage
     //updateMousePositionDebug(e);
-    
+
     // Vérifie si on clique sur un Component
-    const clickedElement = elements.find(elem => isPointInElement(e.clientX, e.clientY, elem));
-    
+    const clickedElement = elements.find((elem) =>
+      isPointInElement(e.clientX, e.clientY, elem)
+    );
+
     if (clickedElement) {
       // Sélectionne l'Component cliqué
       setSelectedElementId(clickedElement.id);
@@ -144,42 +181,50 @@ export const Canvas = () => {
     }
   };
 
-  
-
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (isMovingElement && selectedElementId !== null) {
       // Déplacement d'un Component
       const currentCoords = clientToWorkspaceCoordinates(e.clientX, e.clientY);
-      const prevCoords = clientToWorkspaceCoordinates(elementDragStart.x, elementDragStart.y);
-      
+      const prevCoords = clientToWorkspaceCoordinates(
+        elementDragStart.x,
+        elementDragStart.y
+      );
+
       const dx = currentCoords.workspaceX - prevCoords.workspaceX;
       const dy = currentCoords.workspaceY - prevCoords.workspaceY;
-      
-      setElements(elements.map(elem => {
-        if (elem.id === selectedElementId) {
-          // Calculer la nouvelle position sans contrainte
-          const newX = elem.x + dx;
-          const newY = elem.y + dy;
-          
-          // Appliquer la contrainte à l'espace d'édition
-          const constrained = constrainToEditor(newX, newY, elem.width, elem.height);
-          
-          return { ...elem, x: constrained.x, y: constrained.y };
-        }
-        return elem;
-      }));
-      
+
+      setElements(
+        elements.map((elem) => {
+          if (elem.id === selectedElementId) {
+            // Calculer la nouvelle position sans contrainte
+            const newX = elem.x + dx;
+            const newY = elem.y + dy;
+
+            // Appliquer la contrainte à l'espace d'édition
+            const constrained = constrainToEditor(
+              newX,
+              newY,
+              elem.width,
+              elem.height
+            );
+
+            return { ...elem, x: constrained.x, y: constrained.y };
+          }
+          return elem;
+        })
+      );
+
       setElementDragStart({ x: e.clientX, y: e.clientY });
     } else if (isDragging) {
       // Déplacement du canvas (pan)
       const dx = e.clientX - dragStart.x;
       const dy = e.clientY - dragStart.y;
-      
+
       setPosition({
         x: position.x + dx,
-        y: position.y + dy
+        y: position.y + dy,
       });
-      
+
       setDragStart({ x: e.clientX, y: e.clientY });
     }
   };
@@ -191,28 +236,28 @@ export const Canvas = () => {
 
   // Assurer que mouse up est détecté même en dehors du canvas
   useEffect(() => {
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener("mouseup", handleMouseUp);
     return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, []);
 
   // Style du curseur
   const getCursorStyle = () => {
-    if (isMovingElement) return 'move';
-    if (isDragging) return 'grabbing';
-    return 'grab';
+    if (isMovingElement) return "move";
+    if (isDragging) return "grabbing";
+    return "grab";
   };
 
   // Fonction pour recentrer le canvas
   const handleResetView = () => {
     if (canvasRef.current) {
       const canvasRect = canvasRef.current.getBoundingClientRect();
-      
+
       // Calcul pour centrer l'éditeur dans le canvas
       const centerX = (canvasRect.width - editorWidth) / 2;
       const centerY = (canvasRect.height - editorHeight) / 2;
-      
+
       setPosition({ x: centerX, y: centerY });
       setScale(1);
     }
@@ -220,7 +265,6 @@ export const Canvas = () => {
 
   return (
     <div className="absolute w-full h-screen overflow-hidden bg-stone-950 text-black">
-      
       <div
         ref={canvasRef}
         className="w-full h-full"
@@ -230,52 +274,127 @@ export const Canvas = () => {
         onMouseUp={handleMouseUp}
         style={{ cursor: getCursorStyle() }}
       >
-
         {/* Edit */}
-        <div 
+        <div
           ref={editorRef}
           className="relative outline outline-stone-700 aspect-video"
           style={{
             width: `${editorWidth}px`,
             height: `auto`,
-            background: 'transparent',
+            background: "transparent",
             transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-            transformOrigin: '0 0',
+            transformOrigin: "0 0",
             //boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            overflow: 'visible'
+            overflow: "visible",
           }}
         >
-
-          {elements.map(element => (
-            <div 
-              key={element.id}
-              className={`absolute rounded-xl flex items-center justify-center transition-colors`}
-              style={{
-                left: `${element.x}px`,
-                top: `${element.y}px`,
-                width: `${element.width}px`,
-                height: `${element.height}px`,
-                backgroundColor: `${element.color === 'blue' ? '#dbeafe' : 
-                                  element.color === 'green' ? '#dcfce7' : 
-                                  element.color === 'pink' ? '#fce7f3' : '#f3f4f6'}`,
-                outline: selectedElementId === element.id ? '1px solid oklch(62.3% 0.214 259.815)' : 'none',
-                cursor: 'move',
-                zIndex: selectedElementId === element.id ? 10 : 1
-              }}
-            >
-              {element.content}
-              
-              <div className="absolute -bottom-0 -right-0 text-xs bg-white bg-opacity-70 px-1"
-                style={{ display: selectedElementId === element.id ? 'block' : 'none' }}
+          {elements.map((element) =>
+            element.type === "frame" ? (
+              <div
+                id={`d_${element.id}`}
+                key={element.id}
+                className={`absolute rounded-xl flex items-center justify-center transition-colors`}
+                style={{
+                  left: `${element.x}px`,
+                  top: `${element.y}px`,
+                  width: `${element.width}px`,
+                  height: `${element.height}px`,
+                  backgroundColor: `${element.color ?? "transparent"}`,
+                  outline:
+                    selectedElementId === element.id
+                      ? "1px solid oklch(62.3% 0.214 259.815)"
+                      : "none",
+                  cursor: "move",
+                  zIndex: selectedElementId === element.id ? 10 : 1,
+                }}
               >
-                {element.x.toFixed(0)},{element.y.toFixed(0)}
+                <style jsx>{`
+                  #d_${element.id}::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    border-radius: 10px;
+                    border: 2px solid transparent;
+                    background: linear-gradient(
+                        45deg,
+                        #ff00ff,
+                        #00ffff,
+                        #00ff00,
+                        #ffff00,
+                        #ff0000,
+                        #ff00ff
+                      )
+                      border-box;
+                    background-size: 500% 500%;
+                    animation: gradientAnimation 5s ease infinite;
+                    mask: linear-gradient(#fff 0 0) content-box,
+                      linear-gradient(#fff 0 0);
+                    //-webkit-mask-composite: xor;
+                    mask-composite: exclude;
+                  }
+
+                  @keyframes gradientAnimation {
+                    0% {
+                      background-position: 0 50%;
+                    }
+                    50% {
+                      background-position: 100% 50%;
+                    }
+                    100% {
+                      background-position: 0 50%;
+                    }
+                  }
+                `}</style>
+                {element.content}
+                <div
+                  className="absolute -bottom-0 -right-0 text-xs bg-white bg-opacity-70 px-1"
+                  style={{
+                    display:
+                      selectedElementId === element.id ? "block" : "none",
+                  }}
+                >
+                  {element.x.toFixed(0)},{element.y.toFixed(0)}
+                </div>
+
+                {selectedElementId === element.id && <SelectIndicator />}
               </div>
-              
-              {selectedElementId === element.id && (
-                <SelectIndicator />
-              )}
-            </div>
-          ))}
+            ) : element.type === "rectangle" ? (
+              <div
+                id={`d_${element.id}`}
+                key={element.id}
+                className={`absolute rounded-xl flex items-center justify-center transition-colors`}
+                style={{
+                  left: `${element.x}px`,
+                  top: `${element.y}px`,
+                  width: `${element.width}px`,
+                  height: `${element.height}px`,
+                  backgroundColor: `${element.color ?? "transparent"}`,
+                  outline:
+                    selectedElementId === element.id
+                      ? "1px solid oklch(62.3% 0.214 259.815)"
+                      : "none",
+                  cursor: "move",
+                  zIndex: selectedElementId === element.id ? 10 : 1,
+                }}
+              >
+                {element.content}
+                <div
+                  className="absolute -bottom-0 -right-0 text-xs bg-white bg-opacity-70 px-1"
+                  style={{
+                    display:
+                      selectedElementId === element.id ? "block" : "none",
+                  }}
+                >
+                  {element.x.toFixed(0)},{element.y.toFixed(0)}
+                </div>
+
+                {selectedElementId === element.id && <SelectIndicator />}
+              </div>
+            ) : null
+          )}
         </div>
       </div>
 
@@ -283,20 +402,19 @@ export const Canvas = () => {
         <div className="text-sm px-3 py-1">
           Zoom: {Math.round(scale * 100)}%
         </div>
-        <div className="text-sm flex space-x-2">
-          <button 
-            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-            onClick={handleResetView}
-          >
-            Reset
-          </button>
+          <div className="text-sm flex space-x-2">
+            <button
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+              onClick={handleResetView}
+            >
+              Reset
+            </button>
+          </div>
         </div>
-      </div>
 
       <LeftPanel />
-      
+
       <RightPanel />
-      
     </div>
   );
-}
+};
