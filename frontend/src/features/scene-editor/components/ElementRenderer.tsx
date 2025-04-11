@@ -1,7 +1,7 @@
 // ElementRenderer.tsx
 import React from "react";
-import Frame from "./Frame";
-import Rectangle from "./Rectangle";
+import Frame from "./elements/Frame";
+import Rectangle from "./elements/Rectangle";
 // import other components like Text, Circle, etc.
 
 interface Element {

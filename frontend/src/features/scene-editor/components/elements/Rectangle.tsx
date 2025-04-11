@@ -1,5 +1,5 @@
 import React from "react";
-import {SelectIndicator} from "./SelectIndicator";
+import {SelectIndicator} from "../SelectIndicator";
 
 interface RectangleProps {
   element: {
