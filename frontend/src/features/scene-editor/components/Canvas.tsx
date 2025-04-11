@@ -15,11 +15,11 @@ export const Canvas = () => {
   const editorWidth = 1280;
   const editorHeight = 720;
   
-  // Ajout des éléments éditables
+  // Ajout des Components éditables
   const [elements, setElements] = useState([
-    { id: 1, x: 200, y: 100, width: 160, height: 96, color: 'blue', content: 'Élément 1' },
-    { id: 2, x: 480, y: 200, width: 256, height: 128, color: 'green', content: 'Élément 2' },
-    { id: 3, x: 320, y: 400, width: 200, height: 80, color: 'pink', content: 'Élément 3' },
+    { id: 1, x: 200, y: 100, width: 160, height: 96, color: 'blue', content: 'Component 1' },
+    { id: 2, x: 480, y: 200, width: 256, height: 128, color: 'green', content: 'Component 2' },
+    { id: 3, x: 320, y: 400, width: 200, height: 80, color: 'pink', content: 'Component 3' },
   ]);
   
   // Gestion de la sélection
@@ -86,7 +86,7 @@ export const Canvas = () => {
     return { workspaceX, workspaceY };
   };
 
-  // Fonction pour vérifier si un point est dans un élément
+  // Fonction pour vérifier si un point est dans un Component
   interface Element {
     id: number;
     x: number;
@@ -128,11 +128,11 @@ export const Canvas = () => {
     // Mise à jour des coordonnées de la souris pour le débogage
     //updateMousePositionDebug(e);
     
-    // Vérifie si on clique sur un élément
+    // Vérifie si on clique sur un Component
     const clickedElement = elements.find(elem => isPointInElement(e.clientX, e.clientY, elem));
     
     if (clickedElement) {
-      // Sélectionne l'élément cliqué
+      // Sélectionne l'Component cliqué
       setSelectedElementId(clickedElement.id);
       setIsMovingElement(true);
       setElementDragStart({ x: e.clientX, y: e.clientY });
@@ -147,11 +147,8 @@ export const Canvas = () => {
   
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
-    // Mise à jour des coordonnées de la souris pour le débogage
-    //updateMousePositionDebug(e);
-    
     if (isMovingElement && selectedElementId !== null) {
-      // Déplacement d'un élément
+      // Déplacement d'un Component
       const currentCoords = clientToWorkspaceCoordinates(e.clientX, e.clientY);
       const prevCoords = clientToWorkspaceCoordinates(elementDragStart.x, elementDragStart.y);
       
@@ -234,7 +231,7 @@ export const Canvas = () => {
         style={{ cursor: getCursorStyle() }}
       >
 
-        {/* Zone d'édition centrée */}
+        {/* Edit */}
         <div 
           ref={editorRef}
           className="relative outline outline-stone-700 aspect-video"
@@ -248,8 +245,7 @@ export const Canvas = () => {
             overflow: 'visible'
           }}
         >
-          
-          {/* Éléments éditables */}
+
           {elements.map(element => (
             <div 
               key={element.id}
@@ -269,14 +265,12 @@ export const Canvas = () => {
             >
               {element.content}
               
-              {/* Coordonnées de l'élément pour le débogage */}
               <div className="absolute -bottom-0 -right-0 text-xs bg-white bg-opacity-70 px-1"
                 style={{ display: selectedElementId === element.id ? 'block' : 'none' }}
               >
                 {element.x.toFixed(0)},{element.y.toFixed(0)}
               </div>
               
-              {/* Contrôles de sélection */}
               {selectedElementId === element.id && (
                 <SelectIndicator />
               )}
@@ -285,7 +279,6 @@ export const Canvas = () => {
         </div>
       </div>
 
-      {/* Barre d'informations supérieure */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-510px)] h-10 flex gap-10 justify-center items-center bg-stone-900/90 border-b border-stone-700 px-4 py-2 text-white backdrop-blur-xl">
         <div className="text-sm px-3 py-1">
           Zoom: {Math.round(scale * 100)}%
@@ -300,9 +293,8 @@ export const Canvas = () => {
         </div>
       </div>
 
-      {/* Panneau gauche */}
       <LeftPanel />
-      {/* Panneau droit */}
+      
       <RightPanel />
       
     </div>
