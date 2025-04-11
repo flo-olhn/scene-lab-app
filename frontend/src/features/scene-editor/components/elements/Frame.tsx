@@ -39,20 +39,16 @@ const Frame: React.FC<FrameProps> = ({ element, selected }) => {
           left: 0;
           right: 0;
           bottom: 0;
-          border-radius: 10px;
-          border: 2px solid transparent;
+          border-radius: 12px;
+          border: 4px solid transparent;
           background: linear-gradient(
               45deg,
               #ff00ff,
-              #00ffff,
-              #00ff00,
-              #ffff00,
-              #ff0000,
-              #ff00ff
+              #00ffff
             )
             border-box;
-          background-size: 500% 500%;
-          animation: gradientAnimation 5s ease infinite;
+          background-size: 1000% 1000%;
+          animation: gradientAnimation 1s ease infinite;
           mask: linear-gradient(0, #ffffff, #000) content-box,
             linear-gradient(0, #fff, #000);
           mask-composite: exclude;

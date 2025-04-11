@@ -22,8 +22,8 @@ export const Canvas = () => {
       type: "rectangle",
       x: 200,
       y: 100,
-      width: 160,
-      height: 96,
+      width: 128,
+      height: 72,
       color: "pink",
       content: "",
     },
@@ -40,14 +40,10 @@ export const Canvas = () => {
   ]);
 
   interface Element {
-    id: number;
-    type: string;
     x: number;
     y: number;
     width: number;
     height: number;
-    color?: string;
-    content?: string;
   }
 
   // Gestion de la sélection
@@ -283,7 +279,6 @@ export const Canvas = () => {
             background: "transparent",
             transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
             transformOrigin: "0 0",
-            //boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
             overflow: "visible",
           }}
         >
