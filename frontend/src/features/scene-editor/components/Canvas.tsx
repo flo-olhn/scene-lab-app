@@ -296,15 +296,15 @@ export const Canvas = () => {
         <div className="text-sm px-3 py-1">
           Zoom: {Math.round(scale * 100)}%
         </div>
-          <div className="text-sm flex space-x-2">
-            <button
-              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-              onClick={handleResetView}
-            >
-              Reset
-            </button>
-          </div>
+        <div className="text-sm flex space-x-2">
+          <button
+            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+            onClick={handleResetView}
+          >
+            Reset
+          </button>
         </div>
+      </div>
 
       <LeftPanel />
 
