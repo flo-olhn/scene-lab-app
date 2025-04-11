@@ -305,6 +305,7 @@ export const Canvas = () => {
                       ? "1px solid oklch(62.3% 0.214 259.815)"
                       : "none",
                   cursor: "move",
+                  color: 'white',
                   zIndex: selectedElementId === element.id ? 10 : 1,
                 }}
               >
@@ -330,8 +331,8 @@ export const Canvas = () => {
                       border-box;
                     background-size: 500% 500%;
                     animation: gradientAnimation 5s ease infinite;
-                    mask: linear-gradient(#fff 0 0) content-box,
-                      linear-gradient(#fff 0 0);
+                    mask: linear-gradient(0, #ffffff, #000) content-box,
+                      linear-gradient(0,#fff, #000);
                     //-webkit-mask-composite: xor;
                     mask-composite: exclude;
                   }
@@ -350,7 +351,7 @@ export const Canvas = () => {
                 `}</style>
                 {element.content}
                 <div
-                  className="absolute -bottom-0 -right-0 text-xs bg-white bg-opacity-70 px-1"
+                  className="absolute -bottom-0 -right-0 text-xs text-black bg-white bg-opacity-70 px-1"
                   style={{
                     display:
                       selectedElementId === element.id ? "block" : "none",
