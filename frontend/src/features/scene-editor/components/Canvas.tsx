@@ -41,21 +41,10 @@ export const Canvas = () => {
       type: "text",
       x: 300,
       y: 300,
-      width: 300,
-      height: 100,
-      color: 'green',
+      width: 100,
+      height: 40, // adding width and height allows element to be positioned and moved
       content: "My text",
     },
-    {
-      id: 4,
-      type: "rectangle",
-      x: 400,
-      y: 400,
-      width: 280,
-      height: 280,
-      color: "green",
-      content: "",
-    }
   ]);
 
   interface Element {
