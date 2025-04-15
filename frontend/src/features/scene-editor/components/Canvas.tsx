@@ -20,7 +20,7 @@ export const Canvas = () => {
     {
       id: 1,
       type: "rectangle",
-      x: 200,
+      x: 400,
       y: 100,
       width: 128,
       height: 72,
@@ -34,9 +34,28 @@ export const Canvas = () => {
       y: 200,
       width: 256,
       height: 128,
-      color: "",
       content: "Component 2",
     },
+    {
+      id: 3,
+      type: "text",
+      x: 300,
+      y: 300,
+      width: 300,
+      height: 100,
+      color: 'green',
+      content: "My text",
+    },
+    {
+      id: 4,
+      type: "rectangle",
+      x: 400,
+      y: 400,
+      width: 280,
+      height: 280,
+      color: "green",
+      content: "",
+    }
   ]);
 
   interface Element {
@@ -44,6 +63,7 @@ export const Canvas = () => {
     y: number;
     width: number;
     height: number;
+    fontSize?: number;
   }
 
   // Gestion de la sélection
@@ -191,6 +211,7 @@ export const Canvas = () => {
       setElements(
         elements.map((elem) => {
           if (elem.id === selectedElementId) {
+            console.log(elem.id, elem.x, elem.y);
             // Calculer la nouvelle position sans contrainte
             const newX = elem.x + dx;
             const newY = elem.y + dy;

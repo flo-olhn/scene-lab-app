@@ -1,36 +1,37 @@
 import React from "react";
-import {SelectIndicator} from "../SelectIndicator";
+import { SelectIndicator } from "../SelectIndicator";
 
-interface RectangleProps {
+interface TextProps {
   element: {
     id: number;
     x: number;
     y: number;
     width?: number;
     height?: number;
+    fontSize?: number;
     color?: string;
     content?: React.ReactNode;
   };
   selected: boolean;
 }
 
-const Rectangle: React.FC<RectangleProps> = ({ element, selected }) => {
+const Text: React.FC<TextProps> = ({ element, selected }) => {
   return (
-    <div
+    <div 
       id={`d_${element.id}`}
-      className="absolute rounded-xl flex items-center justify-center transition-colors"
+      className="absolute flex items-center justify-center"
       style={{
-        left: `${element.x}px`,
-        top: `${element.y}px`,
-        width: `${element.width ?? 200}px`,
-        height: `${element.height ?? 120}px`,
-        backgroundColor: element.color || "transparent",
+        color: element.color ?? "white",
+        fontSize: `${element.fontSize ?? 14}px`,
+        backgroundColor: "red",
+        width: `${element.width}px`,
+        height: `${element.height}px`,
         outline: selected ? "1px solid oklch(62.3% 0.214 259.815)" : "none",
         cursor: "move",
         zIndex: selected ? 10 : 1,
       }}
     >
-      {element.content}
+      {element.content ?? "Text"}
       {selected && (
         <>
           <div className="absolute -bottom-0 -right-0 text-xs bg-white bg-opacity-70 px-1">
@@ -43,4 +44,4 @@ const Rectangle: React.FC<RectangleProps> = ({ element, selected }) => {
   );
 };
 
-export default Rectangle;
+export default Text;

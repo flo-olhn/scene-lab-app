@@ -6,8 +6,8 @@ interface FrameProps {
     id: number;
     x: number;
     y: number;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     color?: string;
     content?: React.ReactNode;
   };
@@ -22,8 +22,8 @@ const Frame: React.FC<FrameProps> = ({ element, selected }) => {
       style={{
         left: `${element.x}px`,
           top: `${element.y}px`,
-          width: `${element.width}px`,
-          height: `${element.height}px`,
+          width: `${element.width ?? 200}px`,
+          height: `${element.height ?? 120}px`,
           backgroundColor: element.color || "transparent",
           outline: selected ? "1px solid oklch(62.3% 0.214 259.815)" : "none",
           cursor: "move",
